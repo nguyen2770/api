@@ -109,4 +109,6 @@ module.exports = {
     getAllAssetModelSeftDiagnosia,
     updateStatus,
     uploadExcel,
+    uploadExcel2,
+    
 };
