@@ -23,7 +23,7 @@ const getFloors = catchAsync(async (req, res) => {
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await floorService.queryFloors(filter, options);
     // exchangeRequests.abc = 123;
-    res.send({ results: result });
+    res.send({ results: result, code: 1 });
 });
 
 const getFloorById = catchAsync(async (req, res) => {
@@ -31,7 +31,7 @@ const getFloorById = catchAsync(async (req, res) => {
     if (!Floor) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Floor not found');
     }
-    res.send(Floor);
+    res.send({code: 1,Floor});
 });
 
 /**
@@ -65,6 +65,18 @@ const getAllFloor = catchAsync(async (req, res) => {
     res.send({ code: 1, data: Floors });
 });
 
+const uploadFloorExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.send({ code: 0, message: "Not file" })
+        }
+        const result = await floorService.uploadFloorExcel(req.file.path, req.file)
+        return res.send({ code: 1, result })
+    } catch (error) {
+        return res.send({ code: 0, message: error.message || "Tải file lên không thành công" })
+    }
+};
+
 module.exports = {
     createFloor,
     getFloors,
@@ -73,4 +85,5 @@ module.exports = {
     deleteFloor,
     updateStatus,
     getAllFloor,
+    uploadFloorExcel,
 };

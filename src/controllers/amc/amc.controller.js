@@ -33,18 +33,30 @@ const updateAmc = catchAsync(async (req, res) => {
     res.send({ code: 1, data: _amc });
 });
 const getAmcs = catchAsync(async (req, res) => {
-    const filter = pick(req.query, ['amcNo']);
-    const options = pick(req.query, ['sortBy', 'limit', 'page']);
+    const filter = pick(req.query, [
+        'amcNo',
+        'serviceContractor',
+        'customer',
+        'servicePackage',
+        'serviceContractorName',
+        'customerName',
+        'servicePackageName',
+        'startDate',
+        'endDate',
+        'searchText',
+        'effectiveDate',
+    ]);
+    const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
     const result = await amcService.queryAmcs(filter, options);
-    const amcs = [];
-    if (result.results.length > 0) {
-        for (let index = 0; index < result.results.length; index++) {
-            const element = result.results[index].toObject();
-            element.customer = await customerService.getCustomerById(element.customer);
-            amcs.push(element);
-        }
-    }
-    res.send({ code: 1, data: result, amcs });
+    // const amcs = [];
+    // if (result.results.length > 0) {
+    //     for (let index = 0; index < result.results.length; index++) {
+    //         const element = result.results[index].toObject();
+    //         element.customer = await customerService.getCustomerById(element.customer);
+    //         amcs.push(element);
+    //     }
+    // }
+    res.send({ code: 1, result });
 });
 const getAllAmcs = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['customer']);
@@ -99,7 +111,6 @@ const totalAmcByState = catchAsync(async (req, res) => {
     res.send({ code: 1, data });
 });
 const getAmcMappingAssetMaintenanceByRes = catchAsync(async (req, res) => {
-    console.log();
     const data = await amcService.getAmcMappingAssetMaintenanceByRes({ ...req.body });
     res.send({ code: 1, data });
 });

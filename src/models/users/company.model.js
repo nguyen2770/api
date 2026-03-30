@@ -21,10 +21,53 @@ const companySchema = mongoose.Schema(
             type: String,
         },
         startDate: {
-            type: Date,
+            type: String,
         },
         expireDate: {
             type: Date,
+        },
+        port: {
+            type: String,
+        },
+        dataBase: {
+            type: String,
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
+        taxIdentificationNumber: {
+            type: String,
+        },
+        website: {
+            type: String,
+        },
+        representative: {
+            type: String,
+        },
+        representativePhone: { type: String },
+        databaseUrl: {
+            type: String,
+        },
+        baseUrl: {
+            type: String,
+        },
+        businessType: {
+            type: String,
+        },
+        installName: {
+            type: String,
+        },
+        identifierCode: {
+            type: String,
+        },
+        manufacturingCompany: {
+            type: String,
+            enum: ['pnp', 'mtc'],
+        },
+        loginBeforeStartingWork: {
+            type: Boolean,
+            default: false,
         },
         createdBy: {
             type: SchemaTypes.ObjectId,

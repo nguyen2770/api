@@ -9,15 +9,19 @@ const floorSchema = new Schema(
     {
         floorName: {
             type: String,
-            required: true
+            required: true,
         },
         floorCapacity: {
             type: Number,
-
         },
         status: {
             type: Boolean,
-            default: true
+            default: true,
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
         },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +32,7 @@ const floorSchema = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             default: null,
-        }
+        },
     },
     {
         timestamps: true,
@@ -47,4 +51,3 @@ floorSchema.pre('remove', preRemoveHook(buildRefsToSchema('Floor')));
 const Floor = mongoose.model('Floor', floorSchema);
 
 module.exports = Floor;
-

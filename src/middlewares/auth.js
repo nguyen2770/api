@@ -15,7 +15,8 @@ const verifyCallback =
             //     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
             // }
             req.user = data.user;
-            req.company = data.company
+            req.company = data.company;
+            req.companySetting = data.companySetting
             resolve();
         };
 

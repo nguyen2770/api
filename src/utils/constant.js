@@ -46,6 +46,7 @@ const breakdownStatus = {
     pending_approval: 'pending_approval',
     cloesed: 'cloesed',
     reopen: 'reopen',
+    WWA: 'WWA',
 };
 const breakdownAssignUserStatus = {
     assigned: 'assigned', // đc phép phân công lại
@@ -290,7 +291,6 @@ const SequenceCode = {
     PURCHASE_QUOTATION: 'PURCHASE_QUOTATION',
     PURCHASE_REQUEST: 'PURCHASE_REQUEST',
     SUPPLIES_NEED: 'SUPPLIES_NEED',
-    SCHEDULE_PREVENTIVE: 'SCHEDULE_PREVENTIVE',
     SPARE_PART_REQUEST: 'SPARE_PART_REQUEST',
     CALIBRATION: 'CALIBRATION',
     CALIBRATION_WORK: 'CALIBRATION_WORK',
@@ -494,15 +494,74 @@ const fundingSourcesTypeMap = {
     'Xã hội hóa': 'socialize',
     'Các nguồn khác': 'otherSources',
 };
-const usageStatusTypeMap = {
-    'Đang sử dụng': true,
-    'Đã ngừng sử dụng': false,
-};
+// const usageStatusTypeMap = {
+//     'Đang sử dụng': true,
+//     'Đã ngừng sử dụng': false,
+// };
 const createNewUsingAFormulaType = {
     healthInsurance: 'healthInsurance',
     anotherFormula: 'anotherFormula',
 };
+const assetStatus = {
+    ACTIVE: 'ACTIVE',
+    PAUSED: 'PAUSED',
+    PENDING_CANCEL: 'PENDING_CANCEL',
+    PENDING_DISPOSAL: 'PENDING_DISPOSAL',
+    PENDING_RETURN: 'PENDING_RETURN',
+    RETURNED: 'RETURNED',
+    DISPOSAL: 'DISPOSAL',
+};
 
+const assetStyle = {
+    machineryAndEquipment: 1,
+    measuringEquipment: 2,
+    accessories: 3,
+};
+const inventoryAssetStatus = {
+    draft: 'draft',
+    new: 'new',
+    inProgress: 'inProgress',
+    await_approve: 'await_approve',
+    done: 'done',
+};
+const inventoryAssetDepartmentStatus = {
+    draft: 'draft',
+    assigned: 'assigned',
+    accepted: 'accepted',
+    cancel: 'cancel',
+    inProgress: 'inProgress',
+    pending_approval: 'pending_approval',
+    approved: 'approved',
+    close: 'close',
+};
+const inventoryAssetDepartmentAssetMaintenanceStatus = {
+    exist: 'exist',
+    does_not_exist: 'does_not_exist',
+    not_yet_inventoried: 'not_yet_inventoried',
+};
+const inventoryAssetAssetMaintenanceStatus = {
+    exist: 'exist',
+    does_not_exist: 'does_not_exist',
+    not_yet_inventoried: 'not_yet_inventoried',
+};
+const assetStatusMap = {
+    'Đang hoạt động': assetStatus.ACTIVE,
+    'Tạm dừng': assetStatus.PAUSED,
+    'Chờ hủy': assetStatus.PENDING_CANCEL,
+    'Chờ thanh lý': assetStatus.PENDING_DISPOSAL,
+};
+
+const workAsset = {
+    breakdown: "breakdown",
+    schedulePreventive: "schedulePreventive",
+    calibrationWork: "calibrationWork",
+}
+
+const assetMaintenanceDocumentFileType = {
+    DISPOSAL: "DISPOSAL",
+    ASSET_CANCEL: "ASSET_CANCEL",
+    ASSET_RETURN: "ASSET_RETURN"
+}
 module.exports = {
     roleUser,
     bookingStatus,
@@ -557,6 +616,14 @@ module.exports = {
     fundingSourcesTypeMap,
     propertyInspectionStatus,
     fundingSourcesType,
-    usageStatusTypeMap,
+    assetStatusMap,
     createNewUsingAFormulaType,
+    assetStatus,
+    assetStyle,
+    inventoryAssetStatus,
+    inventoryAssetDepartmentStatus,
+    inventoryAssetDepartmentAssetMaintenanceStatus,
+    inventoryAssetAssetMaintenanceStatus,
+    workAsset,
+    assetMaintenanceDocumentFileType
 };

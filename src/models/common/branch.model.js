@@ -3,12 +3,16 @@ const { toJSON, paginate } = require('../plugins');
 const preRemoveHook = require('../../utils/preRemoveHook');
 const buildRefsToSchema = require('../../utils/buildRefsToSchema');
 
-
 const branchSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: true,
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
         },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
@@ -19,8 +23,9 @@ const branchSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             default: null,
-        }
-    }, { timestamps: true }
+        },
+    },
+    { timestamps: true }
 );
 
 // add plugin that converts mongoose to json
@@ -29,6 +34,6 @@ branchSchema.plugin(paginate);
 
 branchSchema.pre('remove', preRemoveHook(buildRefsToSchema('Branch')));
 
-const branch = mongoose.model('Branch', branchSchema)
+const branch = mongoose.model('Branch', branchSchema);
 
 module.exports = branch;

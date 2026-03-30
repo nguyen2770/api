@@ -2,7 +2,8 @@ const httpStatus = require('http-status');
 const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
 const ApiError = require('../../utils/ApiError');
-const { calibrationService, sequenceService } = require('../../services');
+const { calibrationService, sequenceService, calibrationWorkService, assetMaintenanceService } = require('../../services');
+const { progressStatus } = require('../../utils/constant');
 
 /**
  * Create a user
@@ -41,8 +42,9 @@ const getCalibrations = catchAsync(async (req, res) => {
         'assetName',
         'calibrationName',
         'searchText',
+        'branchs',
     ]);
-    const { calibrations, totalResults } = await calibrationService.queryCalibrations(filter, options);
+    const { calibrations, totalResults } = await calibrationService.queryCalibrations(filter, options, req);
     const calibrationWithTasks = await Promise.all(
         calibrations.map(async (calibration) => {
             const serviceObj = calibration;
@@ -80,7 +82,7 @@ const getCalibrationById = catchAsync(async (req, res) => {
 });
 const startCalibration = catchAsync(async (req, res) => {
     const { id, startDate } = req.body;
-    const calibration = await calibrationService.startCalibration(id, startDate);
+    const calibration = await calibrationService.startCalibration(id, startDate, req.user.id);
     res.send({ code: 1, calibration });
 });
 const stopCalibration = catchAsync(async (req, res) => {
@@ -96,6 +98,21 @@ const changeOfCalibrationContract = catchAsync(async (req, res) => {
     await calibrationService.updateCalibrationWorkByCalibrationContract(id, calibrationContract);
     res.send({ code: 1, calibration });
 });
+const oneQACallBack = catchAsync(async (req, res) => {
+    const io = req.app.get("io");
+    const { jsonData, calibrationWork, companyCode, pdfFile } = req.oneQA;
+
+    const doc = await calibrationService.oneQACallBack(calibrationWork, pdfFile, companyCode);
+
+    if (doc && io) {
+        io.to(calibrationWork._id.toString()).emit("oneqa:completed", {
+            status: jsonData.result
+        });
+    }
+
+    return res.status(200).json({ code: 1 });
+});
+
 module.exports = {
     createCalibration,
     getCalibrations,
@@ -107,4 +124,5 @@ module.exports = {
     startCalibration,
     stopCalibration,
     changeOfCalibrationContract,
+    oneQACallBack,
 };

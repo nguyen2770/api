@@ -25,25 +25,27 @@ const getCalibrationContractById = catchAsync(async (req, res) => {
     res.send({ code: 1, calibrationContractObj });
 });
 const getCalibrationContracts = catchAsync(async (req, res) => {
-    const filter = pick(req.body, ['state', 'status', 'customer', 'serviceContractor', 'contractNo']);
+    // const filter = pick(req.body, ['state', 'status', 'customer', 'serviceContractor', 'contractNo']);
+    const filter = pick(req.body, ['contractNo', 'contractName', 'serviceContractor', 'customer', 'serviceContractorName', 'customerName', 'startDate', 'endDate', 'searchText']);
     const options = pick(req.body, ['sortBy', 'limit', 'page']);
     const resultObj = await calibrationContractService.getCalibrationContracts(filter, options);
-    const resultWithItems = await Promise.all(
-        resultObj.results?.map(async (item) => {
-            const resultObj = item;
-            // resultObj.listResource = await calibrationContractService.getCalibrationContractAttachmentsByCalibrationContract(
-            //     resultObj?._id
-            // );
-            return resultObj;
-        })
-    );
+    // const resultWithItems = await Promise.all(
+    //     resultObj.results?.map(async (item) => {
+    //         const resultObj = item;
+    //         // resultObj.listResource = await calibrationContractService.getCalibrationContractAttachmentsByCalibrationContract(
+    //         //     resultObj?._id
+    //         // );
+    //         return resultObj;
+    //     })
+    // );
     res.send({
         code: 1,
-        resultWithItems,
-        totalResults: resultObj?.totalResults,
-        page: resultObj?.page,
-        limit: resultObj?.limit,
-        totalPages: resultObj?.totalPages,
+        result: resultObj,
+        // resultWithItems,
+        // totalResults: resultObj?.totalResults,
+        // page: resultObj?.page,
+        // limit: resultObj?.limit,
+        // totalPages: resultObj?.totalPages,
     });
 });
 const updateCalibrationContract = catchAsync(async (req, res) => {

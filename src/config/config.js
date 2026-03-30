@@ -66,7 +66,5 @@ module.exports = {
     },
     baseUrl: envVars.BASE_URL,
     baseUrlWeb: envVars.BASE_WEB_URL,
-    expoAccessToken: envVars.EXPO_ACCESS_TOKEN,
-    expoAccessToken2: envVars.EXPO_ACCESS_TOKEN
-
+    expoAccessToken: envVars.EXPO_ACCESS_TOKEN
 };

@@ -5,12 +5,11 @@ const { toJSON, paginate } = require('../plugins');
 const preRemoveHook = require('../../utils/preRemoveHook');
 const buildRefsToSchema = require('../../utils/buildRefsToSchema');
 
-
 const communeSchema = new Schema(
     {
         province: {
             type: mongoose.Types.ObjectId,
-            ref: "Province"
+            ref: 'Province',
         },
         name: {
             type: String,
@@ -32,6 +31,11 @@ const communeSchema = new Schema(
         },
         pathWithType: {
             type: String,
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
         },
     },
     {

@@ -23,7 +23,7 @@ const getCustomers = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['addressTwo', 'contactNumber', 'customerName', 'contactEmail', 'searchText']);
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await customerService.queryCustomers(filter, options);
-    res.send({ results: result });
+    res.send({ results: result, code: 1 });
 });
 
 const getCustomerById = catchAsync(async (req, res) => {
@@ -31,7 +31,7 @@ const getCustomerById = catchAsync(async (req, res) => {
     if (!customer) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Customer not found');
     }
-    res.send(customer);
+    res.send({ code: 1, customer });
 });
 
 const updateCustomer = catchAsync(async (req, res) => {
@@ -56,6 +56,18 @@ const getAllCustomers = catchAsync(async (req, res) => {
     res.send({ code: 1, data: customers });
 });
 
+const uploadCustomerExcel = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.send({ code: 0, message: 'Not file' });
+        }
+        const result = await customerService.uploadCustomerExcel(req.file.path, req.file);
+        return res.send({ code: 1, result });
+    } catch (error) {
+        return res.send({ code: 0, message: error.message || 'Tải file lên không thành công' });
+    }
+};
+
 module.exports = {
     createCustomer,
     getCustomers,
@@ -64,5 +76,6 @@ module.exports = {
     deleteCustomer,
     getAllCustomers,
     updateStatus,
-    insertMany
+    insertMany,
+    uploadCustomerExcel,
 };

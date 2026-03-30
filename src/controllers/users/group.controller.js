@@ -31,7 +31,7 @@ const getGroupById = catchAsync(async (req, res) => {
     if (!group) {
         throw new ApiError(httpStatus.NOT_FOUND, 'group not found');
     }
-    res.send(group);
+    res.send({code: 1, group});
 });
 
 /**

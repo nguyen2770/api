@@ -13,7 +13,7 @@ const getStates = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'countryId']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await stateService.queryStates(filter, options);
-  res.send({ results: result });
+  res.send({ results: result, code: 1 });
 });
 
 const getStateById = catchAsync(async (req, res) => {
@@ -21,7 +21,7 @@ const getStateById = catchAsync(async (req, res) => {
   if (!state) {
     throw new ApiError(httpStatus.NOT_FOUND, 'State not found');
   }
-  res.send(state);
+  res.send({code: 1, state});
 });
 
 const updateState = catchAsync(async (req, res) => {
