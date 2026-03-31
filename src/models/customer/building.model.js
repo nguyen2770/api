@@ -3,19 +3,23 @@ const { toJSON, paginate } = require('../plugins');
 const preRemoveHook = require('../../utils/preRemoveHook');
 const buildRefsToSchema = require('../../utils/buildRefsToSchema');
 
-
 const buildingSchema = mongoose.Schema(
     {
         buildingName: {
             type: String,
-            required: true
+            required: true,
         },
         buildingCapacity: {
             type: Number,
         },
         status: {
             type: Boolean,
-            default: true
+            default: true,
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
         },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
@@ -26,7 +30,7 @@ const buildingSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             default: null,
-        }
+        },
     },
     {
         timestamps: true,
@@ -39,12 +43,9 @@ buildingSchema.plugin(paginate);
 
 buildingSchema.pre('remove', preRemoveHook(buildRefsToSchema('Building')));
 
-
-
 /**
  * @typedef User
  */
 const Building = mongoose.model('Building', buildingSchema);
 
 module.exports = Building;
-

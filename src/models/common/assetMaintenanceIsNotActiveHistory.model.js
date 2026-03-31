@@ -25,6 +25,10 @@ const assetMaintenanceIsNotActiveHistorySchema = mongoose.Schema(
             type: SchemaTypes.ObjectId,
             default: null,
         },
+        closedSource: {
+            type: SchemaTypes.ObjectId,
+            default: null,
+        },
         createdBy: {
             type: SchemaTypes.ObjectId,
             ref: 'User',

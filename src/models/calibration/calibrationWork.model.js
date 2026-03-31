@@ -114,12 +114,12 @@ const calibrationWorkSchema = new mongoose.Schema(
         province: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Province',
-            default: null
+            default: null,
         },
         commune: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Commune',
-            default: null
+            default: null,
         },
         branch: {
             type: SchemaTypes.ObjectId,
@@ -142,6 +142,13 @@ const calibrationWorkSchema = new mongoose.Schema(
             default: null,
         },
         addressNote: {
+            type: String,
+        },
+        radiationSafetyLicenseNumber: {
+            type: String, //số giấy phép an toàn bức xạ
+        },
+        inspectionCertificateNumber: {
+            //số giấy kiểm định
             type: String,
         },
     },

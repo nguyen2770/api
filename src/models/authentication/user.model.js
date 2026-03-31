@@ -66,23 +66,21 @@ const userSchema = mongoose.Schema(
         // Personal Information
         firstName: { type: String },
         lastName: { type: String },
-        fullName:
-        {
+        fullName: {
             type: String,
         },
-        phoneNumber:
-        {
+        phoneNumber: {
             type: String,
         },
-        address:
-        {
+        address: {
             type: String,
         },
         email: { type: String },
-        password:
-        {
-            type: String, trim: true,
-            minlength: 6, private: true
+        password: {
+            type: String,
+            trim: true,
+            minlength: 6,
+            private: true,
         },
         birthDay: { type: Date },
         contactNo: { type: String },
@@ -115,13 +113,13 @@ const userSchema = mongoose.Schema(
         locationDetails: { type: String },
         serverngId: { type: Number },
         avatar: { type: mongoose.Schema.Types.ObjectId, ref: 'Resource', default: null },
-        lastLoginTime: { type: Date }
+        lastLoginTime: { type: Date },
+        positionName: { type: String },
     },
     {
         timestamps: true,
     }
 );
-
 
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);

@@ -19,7 +19,6 @@ const amcSchema = mongoose.Schema(
         },
         requestDate: {
             type: Date,
-            required: true,
         },
         signedDate: {
             type: Date,
@@ -28,6 +27,10 @@ const amcSchema = mongoose.Schema(
             type: Boolean,
             default: true,
             required: true,
+        },
+        // ngày có hiệu lực
+        effectiveDate: {
+            type: Date,
         },
         amcNo: {
             type: String,

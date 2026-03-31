@@ -14,7 +14,7 @@ const assetMaintenanceSchema = mongoose.Schema(
         },
         assetStyle: {
             type: Number,
-            default: null,
+            default: 1,
             enum: [1, 2, 3],
         },
         branch: {
@@ -265,11 +265,28 @@ const assetMaintenanceSchema = mongoose.Schema(
             enum: ['stateBudget', 'socialize', 'otherSources'],
         },
         usageStatus: {
+            // đang không sử dụng trường này
             type: Boolean,
             default: true,
         },
+        assetStatus: {
+            type: String,
+            enum: ['ACTIVE', 'PAUSED', 'PENDING_CANCEL', 'PENDING_DISPOSAL', "DISPOSAL" , 'PENDING_RETURN', 'RETURNED'], // đang hoạt động, tạm dừng, chờ huỷ, chờ thanh lý
+            default: 'ACTIVE',
+        },
         registrationNumber: {
             // số Lưu hành
+            type: String,
+        },
+        parentId: {
+            type: SchemaTypes.ObjectId,
+            ref: 'AssetMaintenance',
+            default: null,
+        },
+        cancelReason: {
+            type: String,
+        },
+        returnReason: {
             type: String,
         },
     },

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { toJSON, paginate } = require('../plugins');
 
-
 const provinceSchema = new Schema(
     {
         name: {
@@ -20,7 +19,12 @@ const provinceSchema = new Schema(
         },
         code: {
             type: Number,
-        }
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
+        },
     },
     {
         timestamps: true,

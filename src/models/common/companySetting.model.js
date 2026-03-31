@@ -29,6 +29,10 @@ const companySettingSchema = mongoose.Schema(
             enum: ['healthInsurance', 'anotherFormula'],
             default: 'anotherFormula',
         },
+        filterByAccount: {
+            type: Boolean,
+            default: false,
+        }
     },
     {
         timestamps: true,

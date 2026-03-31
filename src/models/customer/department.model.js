@@ -5,20 +5,23 @@ const { toJSON, paginate } = require('../plugins');
 const preRemoveHook = require('../../utils/preRemoveHook');
 const buildRefsToSchema = require('../../utils/buildRefsToSchema');
 
-
 const departmentSchema = new Schema(
     {
         departmentName: {
             type: String,
-            required: true
+            required: true,
         },
         departmentCapacity: {
             type: Number,
-
+        },
+        resourceImportData: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ResourceImportData',
+            default: null,
         },
         status: {
             type: Boolean,
-            default: true
+            default: true,
         },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
@@ -29,8 +32,11 @@ const departmentSchema = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             default: null,
+        },
+        allowViewAll: {
+            type: Boolean,
+            default: false, // true: user thuộc phòng ban này xem được tất cả tài sản, false: user thuộc phòng này chỉ xem được tài sản phòng này
         }
-
     },
     {
         timestamps: true,
@@ -49,4 +55,3 @@ departmentSchema.pre('remove', preRemoveHook(buildRefsToSchema('Department')));
 const Department = mongoose.model('Department', departmentSchema);
 
 module.exports = Department;
-

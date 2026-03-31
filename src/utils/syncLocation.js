@@ -1,4 +1,4 @@
-const { AssetMaintenance } = require("../models");
+const { AssetMaintenance } = require('../models');
 
 /**
  * @param {Model} DBModel - Model của bảng cần thay đổi (SchedulePreventive, CalibrationWork)
@@ -9,12 +9,12 @@ const { AssetMaintenance } = require("../models");
 const syncLocationData = async (amId, newData, onFieldsChanged) => {
     const oldData = await AssetMaintenance.findById(amId);
     if (!oldData) {
-        throw new Error("Không tìm thấy AssetMaintenance này");
+        throw new Error('Không tìm thấy AssetMaintenance này');
     }
-    const fieldsToWatch = ['province', 'commune', 'branch', 'building', 'floor', 'department', 'addressNote'];
-    const isChanged = fieldsToWatch.some(field => {
-        const oldVal = oldData[field] ? oldData[field].toString() : "";
-        const newVal = newData[field] ? newData[field].toString() : "";
+    const fieldsToWatch = ['province', 'commune', 'branch', 'building', 'floor', 'department', 'addressNote', 'customer'];
+    const isChanged = fieldsToWatch.some((field) => {
+        const oldVal = oldData[field] ? oldData[field].toString() : '';
+        const newVal = newData[field] ? newData[field].toString() : '';
         // console.log(oldVal + " " + newVal);
         return oldVal !== newVal;
     });
@@ -24,5 +24,5 @@ const syncLocationData = async (amId, newData, onFieldsChanged) => {
     }
 };
 module.exports = {
-    syncLocationData
+    syncLocationData,
 };

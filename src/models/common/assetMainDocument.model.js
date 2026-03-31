@@ -33,6 +33,15 @@ const assetMaintenanceDocumentSchema = mongoose.Schema(
         documentCategory: {
             type: String,
         },
+        fileType: {
+            type: String,
+            enum: [
+                "ASSET_CANCEL",  
+                "ASSET_RETURN",   
+                "OTHER"          
+            ],
+            default: "OTHER"
+        },
         resource: {
             type: SchemaTypes.ObjectId,
             ref: 'Resource',

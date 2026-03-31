@@ -29,9 +29,10 @@ const breakdownSchema = new mongoose.Schema(
             ref: 'SchedulePreventiveTask',
             default: null,
         },
-        amc: {
+        repairContract: {
+            // bỏ không dùng nữa - gắn cho từng assignUser
             type: SchemaTypes.ObjectId,
-            ref: 'Amc',
+            ref: 'RepairContract',
             default: null,
         },
         code: {
@@ -59,16 +60,16 @@ const breakdownSchema = new mongoose.Schema(
             type: String,
             default: 'new',
             enum: [
-                'new',
-                'assigned',
-                'accepted',
-                'rejected',
-                'inProgress',
-                'completed',
+                'new', // mưới
+                'assigned', // phan công
+                'accepted', //chấp nhận
+                'rejected', // từ chối
+                'inProgress', // đang tiến hành
+                'completed', // trường này tạm thời chưa dùng đến
                 'cancelled',
                 'replacement',
                 'experimentalFix',
-                'WWA',
+                'WWA', // khi tất cả kxy sư hoàn thành công việc sẽ tự động chuyển sang trạng thái này
                 'cloesed',
                 'reopen',
                 'submitted',
@@ -153,12 +154,12 @@ const breakdownSchema = new mongoose.Schema(
         province: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Province',
-            default: null
+            default: null,
         },
         commune: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Commune',
-            default: null
+            default: null,
         },
         branch: {
             type: SchemaTypes.ObjectId,
