@@ -6,37 +6,37 @@ const config = require('./config/config');
 const logger = require('./config/logger');
 const { Server } = require("socket.io");
 
-const pfxFile = fs.readFileSync('sslcert/star_medicmms_vn_cert.pfx');
-const privateKey = fs.readFileSync('sslcert/privatekey.key');
-const certificate = fs.readFileSync('sslcert/RootCA.crt');
-const ca = fs.readFileSync('sslcert/Chain_RootCA_Bundle.crt');
-const credentials = { pfx: pfxFile, passphrase: '123456' };
+// const pfxFile = fs.readFileSync('sslcert/star_medicmms_vn_cert.pfx');
+// const privateKey = fs.readFileSync('sslcert/privatekey.key');
+// const certificate = fs.readFileSync('sslcert/RootCA.crt');
+// const ca = fs.readFileSync('sslcert/Chain_RootCA_Bundle.crt');
+// const credentials = { pfx: pfxFile, passphrase: '123456' };
 let server;
 
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
     logger.info('Connected to MongoDB');
     if (config.env === 'production') {
 
-        const httpsServer = https.createServer(credentials, app);
+        // const httpsServer = https.createServer(credentials, app);
 
-        const io = new Server(httpsServer, {
-            cors: { origin: "*" }
-        });
+        // const io = new Server(httpsServer, {
+        //     cors: { origin: "*" }
+        // });
 
-        io.on("connection", (socket) => {
-            console.log("socket connected:", socket.id);
+        // io.on("connection", (socket) => {
+        //     console.log("socket connected:", socket.id);
 
-            socket.on("join", (roomId) => {
-                console.log("join room:", roomId);
-                socket.join(roomId);
-            });
-        });
-        app.set("io", io);
+        //     socket.on("join", (roomId) => {
+        //         console.log("join room:", roomId);
+        //         socket.join(roomId);
+        //     });
+        // });
+        // app.set("io", io);
 
 
-        server = httpsServer.listen(config.port, () => {
-            logger.info(`Listening to port ${config.port}`);
-        });
+        // server = httpsServer.listen(config.port, () => {
+        //     logger.info(`Listening to port ${config.port}`);
+        // });
     }
     else {
         server = app.listen(config.port, () => {

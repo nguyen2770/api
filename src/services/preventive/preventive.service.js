@@ -172,7 +172,7 @@ const queryPreventives = async (filter, options, req) => {
     const peventiveMatch = {};
     // kiểm tra xem có được xem tất cả tài sản không
     let allowViewAll = true;
-    if (req?.companySetting.filterByAccount) {
+    if (req?.companySetting?.filterByAccount) {
         const dep = await Department.findById(req.user.department).select('allowViewAll');
         allowViewAll = dep?.allowViewAll;
     }

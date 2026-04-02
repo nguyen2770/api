@@ -6,6 +6,7 @@ const buildRefsToSchema = require('../../utils/buildRefsToSchema');
 const customerSchema = mongoose.Schema(
     {
         customerName: { type: String, required: true },
+        code: { type: String },
         contactNumber: { type: String },
         contactEmail: { type: String },
         alternateContactNumber: { type: String },

@@ -29,6 +29,15 @@ if (config.env !== 'test') {
     app.use(morgan.errorHandler);
 }
 
+
+app.use(cors({
+    origin: true, // Hoặc 'http://localhost:3003'
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning']
+}));
+app.options('*', cors());
+
 // set security HTTP headers
 app.use(helmet());
 app.use(bodyParser.json());
@@ -44,8 +53,8 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+// app.use(cors());
+// app.options('*', cors());
 
 // jwt authentication
 app.use(passport.initialize());
