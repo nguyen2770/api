@@ -228,7 +228,7 @@ const comfirmBreakdownWWA = async (breakdown, userId, breakdownAssignUserId) => 
             );
         }
         if (_breakdown) {
-            await assetMaintenanceService.updateActiveAsset(_breakdown.assetMaintenance, req.user.id, _breakdown._id, workAsset.breakdown);
+            await assetMaintenanceService.updateActiveAsset(_breakdown.assetMaintenance, userId, _breakdown._id, workAsset.breakdown);
         }
 
         // const assetMaintenanceIsNotActiveHistory = await AssetMaintenanceIsNotActiveHistoryModel.findOne({
