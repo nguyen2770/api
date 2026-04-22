@@ -192,12 +192,12 @@ const approveStockReceipt = async (id, data) => {
         // tạo các stock move từ stock receipt detail
         const stockReceiptDetails = await StockReceiptDetail.find({ stockReceipt: id });
 
+        const location = await StockLocation.findOne({ code: "INTERNAL_MAIN" })
         const locationVirtual = await findOrGenerateStock(stockCode.VIRTUAL_MAIN);
         // const locationInternal = await findOrGenerateStock(stockCode.INTERNAL_MAIN);
         for (const detail of stockReceiptDetails) {
             // tạo stock move từ detail
             // console.log("detail", detail)
-            console.log("data", data)
 
             const stockMove = await StockMove.create({
                 ...detail.toObject(),
@@ -206,7 +206,7 @@ const approveStockReceipt = async (id, data) => {
                 spareParts: detail.itemType == "SpareParts" ? detail.item : null,
                 productQty: detail.qty,
                 location: locationVirtual._id,
-                locationDest: data.payload?.stockReceipt?.locationDest,
+                locationDest: location._id,
                 createdBy: data.updatedBy,
                 // origin: .code,
             });

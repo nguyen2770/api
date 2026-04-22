@@ -129,6 +129,10 @@ const getReceiptStockIssueDetailById = async (id) => {
     return res;
 };
 
+const transferStock = async (stockReceiptDetails) => {
+
+}
+
 const approve = async (id, data) => {
     try {
 
@@ -136,16 +140,21 @@ const approve = async (id, data) => {
         // tạo các stock move từ stock receipt detail
         const stockReceiptDetails = await StockIssueDetail.find({ stockIssue: id });
 
-        const locationVirtual = await findOrGenerateStock(stockLocationCode.VIRTUAL_MAIN);
         // const locationInternal = await findOrGenerateStock(stockLocationCode.INTERNAL_MAIN);
-        const locationVirtualUse = await findOrGenerateStock(stockLocationCode.VIRTUAL_USE);
+
 
         let location, locationDest;
         const stockIssue = await StockIssue.findById(id);
         if (stockIssue.exportType == "DISPOSAL") {
+            const locationVirtual = await findOrGenerateStock(stockLocationCode.VIRTUAL_MAIN);
+
             location = stockIssue.locationSrc;
             locationDest = locationVirtual._id;
         } else if (stockIssue.exportType == "USAGE") {
+            const locationVirtualUse = await findOrGenerateStock(stockLocationCode.VIRTUAL_WAIT_USE);
+            await findOrGenerateStock(stockLocationCode.VIRTUAL_USE);
+
+
             location = stockIssue.locationSrc;
             locationDest = locationVirtualUse._id;
         }
@@ -207,7 +216,7 @@ const createStockIssueFromSpareRequest = async (data, companyId) => {
 
         const locationVirtual = await findOrGenerateStock(stockLocationCode.VIRTUAL_MAIN);
         // const locationInternal = await findOrGenerateStock(stockLocationCode.INTERNAL_MAIN);
-        const locationVirtualUse = await findOrGenerateStock(stockLocationCode.VIRTUAL_USE);
+        const locationVirtualUse = await findOrGenerateStock(stockLocationCode.VIRTUAL_WAIT_USE);
 
         let location, locationDest;
 

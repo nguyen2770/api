@@ -21,7 +21,7 @@ const createAssetModel = catchAsync(async (req, res) => {
 const getAssetModel = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['category', 'subCategory', 'assetTypeCategory', 'manufacturer', 'assetName', 'assetModelName', 'supplier', 'asset']);
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
-    
+
     if (filter.assetName) {
         const assets = await assetService.getAssetByAssetName(filter.assetName);
         if (assets.length > 0) {
@@ -47,7 +47,7 @@ const getAssetModel = catchAsync(async (req, res) => {
     // }
     // res.send({ results: { ...result, results: assetModels } });
 
-    res.send({ results: {...result} });
+    res.send({ results: { ...result } });
 
 });
 
@@ -115,6 +115,27 @@ const getAssetModelByAssetTypeAndAsset = catchAsync(async (req, res) => {
     }
     res.send({ results: { ...result, results: assetModels } });
 });
+
+const getAssetModelStock = catchAsync(async (req, res) => {
+    const filter = pick(req.query, ['category', 'subCategory', 'assetTypeCategory', 'manufacturer', 'assetName', 'assetModelName', 'supplier', 'asset']);
+    const options = pick(req.query, ['sortBy', 'limit', 'page']);
+
+    if (filter.assetName) {
+        const assets = await assetService.getAssetByAssetName(filter.assetName);
+        if (assets.length > 0) {
+            const assetIds = assets.map((a) => a._id);
+            filter.asset = { $in: assetIds };
+        } else {
+            return res.send({ results: { results: [], totalResults: 0, totalPages: 0, page: 1 } });
+        }
+        delete filter.assetName;
+    }
+
+    const result = await assetModelService.queryAssetModelStock(filter, options);
+
+    res.send({ results: { ...result } });
+
+});
 module.exports = {
     createAssetModel,
     getAssetModel,
@@ -125,4 +146,5 @@ module.exports = {
     getAssetModelByAssetId,
     updateAssetModelStatus,
     getAssetModelByAssetTypeAndAsset,
+    getAssetModelStock
 };

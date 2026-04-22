@@ -59,7 +59,7 @@ const createBreakdown = async (data) => {
     };
     const breakdown = await Breakdown.create(newData);
     if (breakdown) {
-        if (breakdown.assetMaintenanceStatus ===  assetMaintenanceStatus.isNotActive) {
+        if (breakdown.assetMaintenanceStatus === assetMaintenanceStatus.isNotActive) {
             await assetMaintenanceService.updatePauseAsset(breakdown.assetMaintenance, breakdown.createdBy, breakdown._id);
         }
     }
@@ -851,6 +851,50 @@ const getTotalBreakdwonStatus = async (filter, req) => {
     };
 };
 
+const stopAllPropertyIncidents = async (assetMaintenanceId, user) => {
+    // hủy toàn bộ sự cố đang lm việc của tài snar
+    const breakdowns = await Breakdown.find({
+        assetMaintenance: assetMaintenanceId,
+        status: {
+            $nin: [breakdownStatus.cancelled, breakdownStatus.cloesed],
+        },
+    }).select('_id');
+    if (!breakdowns.length) return;
+    const breakdownIds = breakdowns.map((b) => b._id);
+    await Breakdown.updateMany(
+        { _id: { $in: breakdownIds } },
+        {
+            status: breakdownStatus.cancelled,
+            reasonCancel: 'Tài sản đã đưa về chờ thanh lý',
+            cancelDate: new Date(),
+            ticketStatus: ticketBreakdownStatus.cloesed,
+        }
+    );
+    await BreakdownAssignUserModel.updateMany(
+        { breakdown: { $in: breakdownIds } },
+        {
+            cancelled: true,
+            reasonCancel: 'Tài sản đã đưa về chờ thanh lý',
+            cancellationTime: new Date(),
+            status: breakdownAssignUserStatus.cancelled,
+        }
+    );
+    const breakdownAssignUsers = await BreakdownAssignUserModel.find({ breakdown: { $in: breakdownIds } }).select('_id');
+    const breakdownAssignUserIds = breakdownAssignUsers.map((b) => b._id);
+    await BreakdownAssignUserCheckinCheckOutModel.updateMany(
+        { breakdownAssignUser: { $in: breakdownAssignUserIds }, logOutAt: null },
+        { logOutAt: new Date(), checkOutComments: 'Tài sản đã đưa về chờ thanh lý' }
+    );
+    for (const breakdownId of breakdownIds) {
+        await createBreakdownHistoryByStatus(
+            breakdownId,
+            breakdownAssignUserStatus.cancelled,
+            user,
+            'Tài sản đã đưa về chờ thanh lý'
+        );
+    }
+};
+
 // const workingTimeBreakdown = async (breakdownId) => {
 //     const breakdown = await Breakdown.findById(breakdownId);
 //     if (!breakdown) {
@@ -1317,4 +1361,5 @@ module.exports = {
     getAssetIncidentHistorys,
     getAllAttachmentByBreackdown,
     getBreakdownAttachmentCloseModelByBreakdown,
+    stopAllPropertyIncidents
 };

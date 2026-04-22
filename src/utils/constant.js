@@ -417,6 +417,7 @@ const stockLocationCode = {
     INTERNAL_MAIN: 'INTERNAL_MAIN',
     VIRTUAL_MAIN: 'VIRTUAL_MAIN',
     VIRTUAL_USE: 'VIRTUAL_USE',
+    VIRTUAL_WAIT_USE: 'VIRTUAL_WAIT_USE'
 };
 const measuringType = {
     Incremental: 'Incremental',
@@ -433,6 +434,7 @@ const stockCode = {
     VIRTUAL_MAIN: 'VIRTUAL_MAIN',
     INTERNAL_MAIN: 'INTERNAL_MAIN',
     VIRTUAL_USE: 'VIRTUAL_USE',
+    VIRTUAL_WAIT_USE: 'VIRTUAL_WAIT_USE'
 };
 
 const stockMeta = {
@@ -448,6 +450,11 @@ const stockMeta = {
     },
     [stockCode.VIRTUAL_USE]: {
         name: 'Kho ảo sử dụng',
+        usage: 'VIRTUAL',
+        active: true,
+    },
+    [stockCode.VIRTUAL_WAIT_USE]: {
+        name: 'Kho ảo chờ sử dụng',
         usage: 'VIRTUAL',
         active: true,
     },

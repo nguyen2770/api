@@ -1327,11 +1327,23 @@ const disposalAsset = async (id, fileList) => {
 
 
     // xuất kho thanh lý
+    // tạo phiếu xuất kho approved luôn
+    // const stockIssue = {
 
+    // },
 
+    // const stockIssueDetail = {
 
+    // },
 
-    // dừng các công việc liên quan 
+    // const stockMove = {
+
+    // },
+
+    // const stockMoveLine = {
+
+    // },
+
 
 
 

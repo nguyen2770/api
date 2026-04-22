@@ -496,6 +496,81 @@ const getCompanyCodeById = async (workOrderId) => {
 
     return calibrationWork;
 };
+const stopAllCalibrationWorkOnTheAsset = async (assetMaintenanceId, user) => {
+    const calibrationWorkService = require('./calibrationWork.service');
+    const calibrations = await CalibrationModel.find({ assetMaintenance: assetMaintenanceId }).select('_id');
+    if (!calibrations.length) return;
+    const calibrationIds = calibrations.map((b) => b._id);
+    // ẩn preventive đi
+    await CalibrationModel.updateMany(
+        { _id: { $in: calibrationIds } },
+        { status: calibrationStatus.stoped, isStart: false, isHide: true }
+    );
+    // xóa đi các PreventiveSchedule chưa dùng tới
+    for (const calibrationId of calibrationIds) {
+        await calibrationWorkService.deleteCalibrationWorkUnusedByCalibrationId(calibrationId);
+    }
+    //Chuyển các calibrationWork đang thực hiện công việc về cancel
+    const calibrationWorks = await CalibrationWorkModel.find({
+        assetMaintenance: assetMaintenanceId,
+        status: {
+            $in: [
+                calibrationWorkStatus.new,
+                calibrationWorkStatus.reOpen,
+                calibrationWorkStatus.inProgress,
+                calibrationWorkStatus.waitingForAdminApproval,
+            ],
+        },
+    }).select('_id');
+    if (!calibrationWorks.length) return;
+    const calibrationWorkIds = calibrationWorks.map((b) => b._id);
+    await CalibrationWorkModel.updateMany(
+        {
+            _id: { $in: calibrationWorkIds },
+        },
+        {
+            $set: {
+                groupStatus: calibrationWorkGroupStatus.history,
+                status: calibrationWorkStatus.cancelled,
+                cancelDate: Date.now(),
+                reasonCancel: 'Hủy công việc bảo trì do tài sản chờ thanh lý',
+            },
+        }
+    );
+    await CalibrationWorkAssignUserModel.updateMany(
+        {
+            calibrationWork: { $in: calibrationWorkIds },
+        },
+        {
+            cancelConfirmDate: new Date(),
+            status: calibrationWorkStatus.cancelled,
+        }
+    );
+    const calibrationWorkAssignUsers = await CalibrationWorkAssignUserModel.find({
+        calibrationWork: { $in: calibrationWorkIds },
+    }).select('calibrationWork');
+    const calibrationWorkAssignUserIds = calibrationWorkAssignUsers.map((b) => b.calibrationWork);
+    await CalibrationWorkCheckinCheckOutModel.updateMany(
+        {
+            calibrationWorkAssignUser: calibrationWorkAssignUserIds,
+            checkOutDateTime: null,
+        },
+        { checkOutDateTime: new Date(), comment: 'Hủy công việc bảo trì do tài sản chờ thanh lý' }
+    );
+    // lưu lại lịch sử
+    for (const calibrationWorkId of calibrationWorkIds) {
+        const history = await calibrationWorkService.getCalibrationWorkTimelineByRes({ calibrationWork: calibrationWorkId });
+        const payloadTimeline = {
+            calibrationWork: calibrationWorkId,
+            oldStatus: history ? history.status : 'null',
+            status: progressStatus.cancelled,
+            workedBy: user,
+            workedDate: Date.now(),
+            comment: 'Hủy công việc bảo trì do tài sản chờ thanh lý',
+        };
+        await calibrationWorkService.createCalibrationWorkTimeline(payloadTimeline);
+    }
+};
 module.exports = {
     createCalibration,
     queryCalibrations,
@@ -513,4 +588,5 @@ module.exports = {
     updateCalibrationWorkByCalibrationContract,
     oneQACallBack,
     getCompanyCodeById,
+    stopAllCalibrationWorkOnTheAsset
 };

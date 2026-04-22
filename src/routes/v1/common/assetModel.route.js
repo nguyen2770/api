@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/create', auth('createAssetModel'), assetModelController.createAssetModel);
 router.get('/get-list', assetModelController.getAssetModel);
+router.get('/get-list-inventory', assetModelController.getAssetModelStock);
 router.get('/get-by-id/:id', assetModelController.getAssetModelById);
 router.get('/get-by-assetId', assetModelController.getAssetModelByAssetId)
 router.patch('/update/:id', auth('updateAssetModel'), assetModelController.updateAssetModel);

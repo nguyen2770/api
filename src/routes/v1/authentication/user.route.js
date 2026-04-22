@@ -12,6 +12,7 @@ router.get('/get-all', userController.getAllUser);
 router.get('/getAll', userController.getAllUser);
 router.route('/create').post(auth('manageUsers'), userController.createUser);
 router.route('/get-list').get(auth('getUsers'), userController.getUsers);
+router.route('/get-list_ks').get(auth('getUsers'), userController.getListKs);
 router.route('/get-company-by-code/:code').patch(auth('getCompanyByCode'), userController.getCompanyByCode);
 
 router.patch('/update-status', userController.updateStatus);

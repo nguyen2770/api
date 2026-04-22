@@ -271,7 +271,7 @@ const assetMaintenanceSchema = mongoose.Schema(
         },
         assetStatus: {
             type: String,
-            enum: ['ACTIVE', 'PAUSED', 'PENDING_CANCEL', 'PENDING_DISPOSAL', "DISPOSAL" , 'PENDING_RETURN', 'RETURNED'], // đang hoạt động, tạm dừng, chờ huỷ, chờ thanh lý
+            enum: ['ACTIVE', 'PAUSED', 'PENDING_CANCEL', 'PENDING_DISPOSAL', "DISPOSAL", 'PENDING_RETURN', 'RETURNED'], // đang hoạt động, tạm dừng, chờ huỷ, chờ thanh lý
             default: 'ACTIVE',
         },
         registrationNumber: {
@@ -289,6 +289,9 @@ const assetMaintenanceSchema = mongoose.Schema(
         returnReason: {
             type: String,
         },
+        warrantyEndDate: {
+            type: Date,
+        }
     },
     {
         timestamps: true,

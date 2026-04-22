@@ -18,6 +18,10 @@ const {
     assetModelSparePartService,
     sequenceService,
     branchService,
+    stockLocationService,
+    breakdownService,
+    preventiveService,
+    calibrationService,
 } = require('../../services');
 const ApiError = require('../../utils/ApiError');
 const { Breakdown, PreventiveModel, AssetMaintenance } = require('../../models');
@@ -150,6 +154,10 @@ const createAssetMaintenance = catchAsync(async (req, res) => {
                     });
                 }
             }
+
+            await stockLocationService.transferStockAsetModel('69df9eebbb8e09ee7c6d803b', '69e34b9563fd2bb414c4169c', createdAssetMaintenance)
+
+
         }
         res.status(httpStatus.CREATED).send({
             code: 1,
@@ -747,6 +755,14 @@ const requestCancelAsset = catchAsync(async (req, res) => {
 
 const approveCancelAsset = catchAsync(async (req, res) => {
     const data = await assetMaintenanceService.approveCancelAsset(req.body.id);
+
+    // đóng dừng các công việc đang diễn ra
+    //Sự cố
+    await breakdownService.stopAllPropertyIncidents(req.body.id, req?.user?.id);
+    // // bảo trì, hiệu chuẩn
+    await preventiveService.stopAllMaintenanceOfTheProperty(req.body.id, req?.user?.id);
+    await calibrationService.stopAllCalibrationWorkOnTheAsset(req.body.id, req?.user?.id);
+
     res.status(httpStatus.OK).send({ code: 1, data: data });
 });
 const getPropertyAccessoriesByAssetMaintenance = catchAsync(async (req, res) => {
@@ -796,6 +812,13 @@ const requestReturnAsset = catchAsync(async (req, res) => {
 
 const approveReturnAsset = catchAsync(async (req, res) => {
     const data = await assetMaintenanceService.approveReturnAsset(req.body.id);
+
+    //Sự cố
+    await breakdownService.stopAllPropertyIncidents(req.body.id, req?.user?.id);
+    // // bảo trì, hiệu chuẩn
+    await preventiveService.stopAllMaintenanceOfTheProperty(req.body.id, req?.user?.id);
+    await calibrationService.stopAllCalibrationWorkOnTheAsset(req.body.id, req?.user?.id);
+
     res.status(httpStatus.OK).send({ code: 1, data: data });
 });
 

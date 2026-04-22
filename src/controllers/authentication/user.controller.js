@@ -187,6 +187,45 @@ const uploadUserExcel = async (req, res) => {
         return res.send({ code: 0, message: error.message || 'Tải file lên không thành công' });
     }
 };
+
+const getListKs = async (req, res) => {
+    const { branch, department, role } = req.query;
+    const filter = pick(req.query, ['fullName', 'contactNo', 'email', 'username', 'searchText']);
+    if (branch && branch.trim()) {
+        filter.branch = new mongoose.Types.ObjectId(branch);
+    }
+
+    if (department && department.trim()) {
+        filter.department = new mongoose.Types.ObjectId(department);
+    }
+
+    if (role && role.trim()) {
+        filter.role = new mongoose.Types.ObjectId(role);
+    }
+    const options = pick(req.query, ['sortBy', 'limit', 'page']);
+    const result = await userService.getListKs(filter, options);
+    if (result && Array.isArray(result.results)) {
+        result.results = await Promise.all(
+            result.results.map(async (user) => {
+                const breakdownAssignUserCount = await breakdownAssignUserService.getTotalBreakdownAssignUserByUserId(
+                    user._id
+                );
+                const schedulePreventiveTaskAssignUser =
+                    await schedulePreventiveService.getTotalSchedulePreventiveTaskAssignUserByUser(user._id);
+                const calibrationWorkAssignUserByUser = await calibrationWorkService.getCalibrationWorkAssignUserByUser(
+                    user._id
+                );
+                return {
+                    ...user.toJSON(),
+                    breakdownAssignUserCount,
+                    schedulePreventiveTaskAssignUser,
+                    calibrationWorkAssignUserByUser,
+                };
+            })
+        );
+    }
+    res.send({ ...result, code: 1 });
+}
 module.exports = {
     createUser,
     getUsers,
@@ -206,4 +245,5 @@ module.exports = {
     verifyApp,
     getCompanyByCode,
     uploadUserExcel,
+    getListKs
 };

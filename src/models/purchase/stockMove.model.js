@@ -41,6 +41,10 @@ const StockMoveSchema = mongoose.Schema(
             type: SchemaTypes.ObjectId,
             ref: 'AssetModel',
         },
+        assetMaintenance: {
+            type: SchemaTypes.ObjectId,
+            ref: 'AssetMaintenance',
+        },
         unitPrice: {
             type: Number,
         },

@@ -16,9 +16,9 @@ const bcrypt = require('bcryptjs');
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-    if (await User.isUsernameTaken(userBody.username)) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
-    }
+    // if (await User.isUsernameTaken(userBody.username)) {
+    //     throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
+    // }
     return User.create(userBody);
 };
 
@@ -87,9 +87,9 @@ const updateUserById = async (userId, updateBody) => {
     if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
     }
-    if (updateBody.username && (await User.isUsernameTaken(updateBody.username, userId))) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
-    }
+    // if (updateBody.username && (await User.isUsernameTaken(updateBody.username, userId))) {
+    //     throw new ApiError(httpStatus.BAD_REQUEST, 'Username already taken');
+    // }
     Object.assign(user, updateBody);
     await user.save();
     return user;
@@ -348,6 +348,40 @@ const uploadUserExcel = async (filePath, file) => {
         throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.message);
     }
 };
+
+const getListKs = async (filter, options) => {
+    const { searchText, ...otherFilters } = filter;
+
+    const roleid = [
+        '690a2d4a1ac4320408d689bd',
+        '6978728bd85fcb5d00f82e8c',
+        '69787293d85fcb5d00f82e96',
+        '69cfd4af11ac2236bc700def',
+        '6978729ad85fcb5d00f82ea0',
+        '69e8eaaffb4720dea03eec96'
+    ];
+    let finalFilter = {
+        ...otherFilters,
+        role: { $in: roleid }
+    };
+
+
+    if (searchText) {
+        const searchRegex = new RegExp(searchText, 'i');
+        finalFilter.$or = [{ fullName: searchRegex }, { contactNo: searchRegex }, { email: searchRegex }];
+    }
+
+    const users = await User.paginate(finalFilter, {
+        ...options,
+        populate: [
+            { path: 'role', select: 'name' },
+            { path: 'branch', select: 'name' },
+            { path: 'department', select: 'departmentName' },
+        ],
+    });
+
+    return users;
+};
 module.exports = {
     createUser,
     queryUsers,
@@ -370,4 +404,5 @@ module.exports = {
     logoutMobile,
     getCompanyByCode,
     uploadUserExcel,
+    getListKs
 };

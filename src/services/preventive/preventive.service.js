@@ -1327,6 +1327,81 @@ const getPreventiveBySchedulePreventive = async (schedulePreventiveId) => {
         .lean();
     return preventive;
 };
+
+const stopAllMaintenanceOfTheProperty = async (assetMaintenanceId, user) => {
+    const preventives = await PreventiveModel.find({ assetMaintenance: assetMaintenanceId }).select('_id');
+    if (!preventives.length) return;
+    const preventiveIds = preventives.map((b) => b._id);
+    // ẩn preventive đi
+    await PreventiveModel.updateMany(
+        { _id: { $in: preventiveIds } },
+        { status: preventiveStatus.stoped, isStart: false, activity: false }
+    );
+    // xóa đi các PreventiveSchedule chưa dùng tới
+    for (const preventiveId of preventiveIds) {
+        await schedulePreventiveService.deleteManySchedulePreventive({
+            preventive: preventiveId,
+            startDate: { $gte: new Date() },
+        });
+    }
+    //Chuyển các schedulePreventive đang thực hiện công việc về cancel
+    const schedulePreventives = await SchedulePreventiveModel.find({
+        assetMaintenance: assetMaintenanceId,
+        status: {
+            $in: [
+                schedulePreventiveStatus.new,
+                schedulePreventiveStatus.inProgress,
+                schedulePreventiveStatus.waitingForAdminApproval,
+                schedulePreventiveStatus.submitted,
+            ],
+        },
+    }).select('_id ');
+    if (!schedulePreventives.length) return;
+    const schedulePreventiveIds = schedulePreventives.map((b) => b._id);
+    await SchedulePreventiveModel.updateMany(
+        {
+            _id: { $in: schedulePreventiveIds },
+        },
+        {
+            $set: {
+                ticketStatus: ticketSchedulePreventiveStatus.history,
+                status: schedulePreventiveStatus.cancelled,
+                cancelDate: Date.now(),
+                comment: 'Hủy công việc bảo trì do tài sản chờ thanh lý',
+            },
+        }
+    );
+    await SchedulePreventiveTaskAssignUserModel.updateMany(
+        {
+            schedulePreventive: { $in: schedulePreventiveIds },
+        },
+        {
+            reasonCancelConfirm: 'Hủy công việc bảo trì do tài sản chờ thanh lý',
+            cancelConfirmDate: new Date(),
+            status: schedulePreventiveTaskAssignUserStatus.cancelled,
+        }
+    );
+    const schedulePreventiveTaskAssignUsers = await SchedulePreventiveTaskAssignUserModel.find({
+        schedulePreventive: { $in: schedulePreventiveIds },
+    }).select('schedulePreventiveTask schedulePreventive');
+    const schedulePreventiveTaskAssignUserIds = schedulePreventiveTaskAssignUsers.map((b) => b.schedulePreventiveTask);
+    await SchedulePreventiveCheckinCheckOutModel.updateMany(
+        {
+            schedulePreventiveTask: schedulePreventiveTaskAssignUserIds,
+            checkOutDateTime: null,
+        },
+        { checkOutDateTime: new Date(), comment: 'Hủy công việc bảo trì do tài sản chờ thanh lý' }
+    );
+    for (const schedulePreventiveId of schedulePreventiveIds) {
+        await schedulePreventiveService.createSchedulePreventiveHistoryByStatus(
+            schedulePreventiveId,
+            null,
+            historySchedulePreventiveStatus.cancelled,
+            user,
+            'Hủy công việc bảo trì do tài sản chờ thanh lý'
+        );
+    }
+};
 module.exports = {
     queryPreventives,
     getPreventiveById,
@@ -1353,4 +1428,5 @@ module.exports = {
     getpreventiveConditionBasedsByPreventive,
     changeOfContractPreventive,
     getPreventiveBySchedulePreventive,
+    stopAllMaintenanceOfTheProperty
 };
