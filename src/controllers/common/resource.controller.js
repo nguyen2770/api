@@ -44,6 +44,7 @@ const saveImage = async (req, res, next) => {
         next();
     });
 };
+
 const saveDocumentBreakdown = async (req, res, next) => {
     const uploadDir = path.join(__dirname, `../../../uploads/${req.body.companyCode || req.query.companyCode}`);
     if (!fs.existsSync(uploadDir)) {
@@ -56,7 +57,6 @@ const saveDocumentBreakdown = async (req, res, next) => {
             const originalName = Buffer
                 .from(file.originalname, 'latin1')
                 .toString('utf8');
-
             cb(null, originalName);
         }
     });
@@ -66,6 +66,7 @@ const saveDocumentBreakdown = async (req, res, next) => {
         next();
     });
 };
+
 const uploadDocumentBreakdown = catchAsync(async (req, res) => {
     if (!req.file) {
         return res.status(httpStatus.OK).send({
@@ -94,6 +95,7 @@ const uploadDocumentBreakdown = catchAsync(async (req, res) => {
         fileName,
     });
 });
+
 const uploadImage = catchAsync(async (req, res) => {
     if (!req.file) {
         return res.status(httpStatus.OK).send({
@@ -121,12 +123,14 @@ const uploadImage = catchAsync(async (req, res) => {
         fileName,
     });
 });
+
 const dirSize = async (directory) => {
     const files = await readdir(directory);
     const stats = files.map((file) => stat(path.join(directory, file)));
 
     return (await Promise.all(stats)).reduce((accumulator, { size }) => accumulator + size, 0);
 };
+
 const getSizeUsed = catchAsync(async (req, res) => {
     const folderPath = path.join(__dirname, `../../../uploads/${req.company.code}`);
     let size = 0;
@@ -212,6 +216,7 @@ const downloadImage = catchAsync(async (req, res) => {
     });
     readStream.pipe(res);
 });
+
 const previewResource = async (req, res) => {
     const { id } = req.params;
     try {

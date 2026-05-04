@@ -65,7 +65,10 @@ const queryStockReceipt = async (filter, options) => {
         ...options,
         populate: [
             { path: "branch", select: "name" },
-            { path: "department", select: "departmentName" }
+            { path: "department", select: "departmentName" },
+            { path: "supplier" },
+            { path: "createdBy", select: "fullName" },
+
         ]
     });
 

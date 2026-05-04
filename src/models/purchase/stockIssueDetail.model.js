@@ -29,7 +29,7 @@ const stockIssueDetailSchema = new mongoose.Schema({
     unitPrice:
     {
         type: Number,
-        required: true,
+        // required: true,
     },
     vatPercent:
     {
